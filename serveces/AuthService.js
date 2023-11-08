@@ -1,4 +1,7 @@
-import UserService from "./UserService";
+import UserService from './UserService';
+import jwt from 'jsonwebtoken';
+import Config from '../config/'
+
 
 UserService;
 class AuthService {
@@ -20,6 +23,30 @@ class AuthService {
       id: newUser._id,
       message: "Account was created",
     };
+  }
+
+  static async loginService(email, password) {
+    const user = await UserService.findByEmail(email);
+    if (!user) {
+      return {
+        message: "invalid credentials",
+      };
+    }
+
+    const isMatched = user.comparePassword(password);
+
+    if (!isMatched) {
+      return {
+        message: "invalid credentials",
+      };
+    }
+    const token = jwt.sign({
+        userId: user._id
+    }, Config.JWTSECRET, {
+        expiresIn: '2d'
+    })
+
+    return {jwt: token}
   }
 }
 

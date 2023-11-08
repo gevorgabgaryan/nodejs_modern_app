@@ -6,7 +6,8 @@ const Config = {
     mongoDB: {
         url: process.env.MongoDB_URL || 'mongodb://localhost:27017',
         dbName: 'modern_app'
-    }
+    },
+    JWTSECRET: process.env.JWTSECRET || 'mysecret',
 }
 
 export default Config

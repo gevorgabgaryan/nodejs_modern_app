@@ -1,6 +1,10 @@
 import {Router} from "express";
 import AuthController from "../controllers/authController";
-import {validateRegisterData} from "../middlewares/validation";
+import {
+  validateRegisterData,
+  validateLoginData,
+} from "../middlewares/validation";
+
 
 const authRoutes = Router();
 
@@ -18,7 +22,25 @@ authRoutes.post("/register", validateRegisterData, async (req, res) => {
       result,
     });
   } catch (e) {
-    console.log(e)
+    console.log(e);
+    res.json({
+      status: false,
+      error: true,
+      message: "System error",
+    });
+  }
+});
+
+authRoutes.post("/login", validateLoginData, async (req, res) => {
+  try {
+    const {email, password} = req.body;
+    const result = await AuthController.login(email, password);
+    res.json({
+      status: true,
+      result,
+    });
+  } catch (e) {
+    console.log(e);
     res.json({
       status: false,
       error: true,

@@ -9,6 +9,10 @@ class AuthController {
       lastName
     );
   }
+
+  static async login(email, password){
+    return await AuthService.loginService(email, password);
+  }
 }
 
 export default AuthController;

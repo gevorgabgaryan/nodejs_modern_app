@@ -1,8 +1,12 @@
-import {registerBodySchema} from "../validators/authValidator";
+import {registerBodySchema, loginBodySchema} from "../validators/authValidator";
 
 export const validateRegisterData = (req, res, next) => {
   _validationHandler(req, res, next, registerBodySchema);
 };
+
+export const validateLoginData = (req, res, next) => {
+  _validationHandler(req, res, next, loginBodySchema)
+}
 
 const _validationHandler = (
   req,

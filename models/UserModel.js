@@ -40,6 +40,10 @@ userSchema.pre("save", async function preSave(next) {
   }
 });
 
+userSchema.methods.comparePassword = async function comparePassword(enteredPassword) {
+    return bcrypt.compare(enteredPassword, this.password);
+}
+
 const UserModel = model('user', userSchema)
 
 export default UserModel;
