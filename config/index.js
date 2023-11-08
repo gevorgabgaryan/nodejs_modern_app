@@ -2,7 +2,11 @@ import { config } from "dotenv"
 config();
 
 const Config = {
-    port: process.env.PORT || 3115
+    port: process.env.PORT || 3115,
+    mongoDB: {
+        url: process.env.MongoDB_URL || 'mongodb://localhost:27017',
+        dbName: 'modern_app'
+    }
 }
 
 export default Config
