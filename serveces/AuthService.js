@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import Config from "../config/";
 import MailSenderService from "./MailSenderService";
 import UserModel from "../models/userModel";
+import ResetTokenModel from "../models/ResetTokenMpdel";
 
 UserService;
 class AuthService {
@@ -22,7 +23,8 @@ class AuthService {
     );
     const isEmailSend = await MailSenderService.sendMail(
       email,
-      newUser.verificationToken
+      newUser.verificationToken,
+      "Verification Code"
     );
     return {
       id: newUser._id,
@@ -90,6 +92,49 @@ class AuthService {
     return {
       message: "Successful verification",
     };
+  }
+
+  static async resetPassword(email) {
+    const user = await UserService.findByEmail(email);
+    if (!user) {
+      return {
+        message: "User not found",
+      };
+    }
+    const resetToken = await this._createPasswordResetToken(user._id);
+    const isTokenlSend = await MailSenderService.sendMail(
+      email,
+      resetToken,
+      "Reset password code"
+    );
+    return {
+      id: user._id,
+      message: isTokenlSend ? "Reset token sent" : "System error",
+    };
+  }
+
+  static async verifyResetPassword(token, password) {
+    console.log(password)
+    const resetToken = await ResetTokenModel.findOne({token});
+    if (!resetToken) {
+      return {
+        message: "Reset token not found",
+      };
+    }
+
+    await UserService.resetPassword(resetToken.userId, password);
+
+    await ResetTokenModel.deleteOne({token});
+
+    return {
+      message: 'Passwor successful changed'
+    };
+  }
+
+  static async _createPasswordResetToken(userId) {
+    const resetToken = new ResetTokenModel({userId});
+    const newToken = await resetToken.save();
+    return newToken.token;
   }
 }
 

@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import Config from '../config'
 import crypto from 'crypto';
 
-const userSchema = new Schema({
+const userSchema = Schema({
   firstName: {
     type: String,
     trim: true,
@@ -41,7 +41,7 @@ const userSchema = new Schema({
     type: String,
     index: true,
     required: true,
-    default: crypto.randomBytes(16).toString('hex') // 16 bytes are represented as 32 hexadecimal characters
+    default:  crypto.randomBytes(16).toString('hex') // 16 bytes are represented as 32 hexadecimal characters
   }
 
 });
@@ -57,6 +57,8 @@ userSchema.pre("save", async function preSave(next) {
       next(e);
     }
   }
+}, {
+    timestamps: true
 });
 
 userSchema.methods.comparePassword = async function comparePassword(enteredPassword) {

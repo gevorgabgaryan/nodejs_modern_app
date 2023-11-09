@@ -4,11 +4,11 @@ import Config from "../config/";
 sgMail.setApiKey(Config.SendgridAPIKey);
 
 class MailSenderService {
-  static async sendMail(recipientEmail, verificationCode) {
+  static async sendMail(recipientEmail, verificationCode, subject) {
     const msg = {
       to: recipientEmail,
       from: Config.fromEmail,
-      subject: "Verification Code",
+      subject,
       text: `Your verification code is: ${verificationCode}`,
     };
     try {

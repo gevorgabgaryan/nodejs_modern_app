@@ -1,16 +1,38 @@
-import {registerBodySchema, loginBodySchema, verifyParamsSchema} from "../validators/authValidator";
+import {
+  registerBodySchema,
+  loginBodySchema,
+  verifyParamsSchema,
+  resetPasswordBodySchema,
+  verifyResetPasswordBodySchema,
+  verifyResetPasswordParamsSchema,
+} from "../validators/authValidator";
 
 export const validateRegisterData = (req, res, next) => {
   _validationHandler(req, res, next, registerBodySchema);
 };
 
 export const validateLoginData = (req, res, next) => {
-  _validationHandler(req, res, next, loginBodySchema)
-}
+  _validationHandler(req, res, next, loginBodySchema);
+};
 
-export const validateVerifyData= (req, res, next) => {
-    _validationHandler(req, res, next, null, null, verifyParamsSchema)
-  }
+export const validateVerifyData = (req, res, next) => {
+  _validationHandler(req, res, next, null, null, verifyParamsSchema);
+};
+
+export const validateResetPasswordData = (req, res, next) => {
+  _validationHandler(req, res, next, resetPasswordBodySchema);
+};
+
+export const validateVerifyResetPassword = (req, res, next) => {
+  _validationHandler(
+    req,
+    res,
+    next,
+    verifyResetPasswordBodySchema,
+    null,
+    verifyResetPasswordParamsSchema
+  );
+};
 
 const _validationHandler = (
   req,
@@ -56,6 +78,7 @@ const _validationHandler = (
         return;
       }
     }
+
     next();
   } catch (e) {
     console.log(e);
