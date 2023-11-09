@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import Config from "../config/";
 import MailSenderService from "./MailSenderService";
 import UserModel from "../models/userModel";
-import ResetTokenModel from "../models/ResetTokenMpdel";
+import ResetTokenModel from "../models/ResetTokenModel";
+import SessionModel from '../models/SessionModel'
 
 UserService;
 class AuthService {
@@ -33,7 +34,7 @@ class AuthService {
     };
   }
 
-  static async login(email, password) {
+  static async login(email, password, rememberMe) {
     const user = await UserService.findByEmail(email);
     if (!user) {
       return {
@@ -66,9 +67,17 @@ class AuthService {
       },
       Config.JWTSecret,
       {
-        expiresIn: "2d",
+        expiresIn: rememberMe ? "1y" : "1h",
       }
     );
+
+    const session = new SessionModel({
+        token,
+        userId: user._id,
+        role: user.role
+    })
+
+    await session.save();
 
     return {jwt: token};
   }
@@ -114,7 +123,7 @@ class AuthService {
   }
 
   static async verifyResetPassword(token, password) {
-    console.log(password)
+    console.log(password);
     const resetToken = await ResetTokenModel.findOne({token});
     if (!resetToken) {
       return {
@@ -127,7 +136,7 @@ class AuthService {
     await ResetTokenModel.deleteOne({token});
 
     return {
-      message: 'Passwor successful changed'
+      message: "Password successful changed",
     };
   }
 

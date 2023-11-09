@@ -5,8 +5,8 @@ class AuthController {
     return await AuthService.register(email, password, firstName, lastName);
   }
 
-  static async login(email, password) {
-    return await AuthService.login(email, password);
+  static async login(email, password, rememberMe) {
+    return await AuthService.login(email, password, rememberMe);
   }
 
   static async verify(userId, verificationToken) {

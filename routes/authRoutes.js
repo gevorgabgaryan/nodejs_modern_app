@@ -35,8 +35,8 @@ authRoutes.post("/register", validateRegisterData, async (req, res) => {
 
 authRoutes.post("/login", validateLoginData, async (req, res) => {
   try {
-    const {email, password} = req.body;
-    const result = await AuthController.login(email, password);
+    const {email, password, rememberMe} = req.body;
+    const result = await AuthController.login(email, password, rememberMe);
     res.json({
       status: true,
       result,
@@ -99,7 +99,7 @@ authRoutes.put(
   "/verify-reset-password/:resetToken",
   validateVerifyResetPassword,
   async (req, res) => {
- 
+
     try {
       const {resetToken} = req.params;
       const {password} = req.body;
