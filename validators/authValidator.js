@@ -1,6 +1,7 @@
 import Joi from "joi";
 import {passwordPattern} from "../utils/constants";
 
+
 export const registerBodySchema = Joi.object({
   firstName: Joi.string().min(3).max(200),
   lastName: Joi.string().min(3).max(200),
@@ -19,4 +20,9 @@ export const loginBodySchema = Joi.object({
     .required()
     .min(6)
     .max(20),
+});
+
+export const verifyParamsSchema = Joi.object({
+  userId: Joi.string().hex().length(24),
+  verificationToken: Joi.string().hex().length(32),
 });

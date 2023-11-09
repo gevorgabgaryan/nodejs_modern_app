@@ -1,5 +1,7 @@
 import {Schema, model} from "mongoose";
 import bcrypt from "bcrypt";
+import Config from '../config'
+import crypto from 'crypto';
 
 const userSchema = new Schema({
   firstName: {
@@ -25,6 +27,23 @@ const userSchema = new Schema({
     minlength: 6,
     triem: true,
   },
+  role: {
+    type: String,
+    enum: Config.userRoles,
+    default: 'user'
+  },
+  status:  {
+    type: String,
+    enum: Config.userStatuses,
+    default: 'new'
+  },
+  verificationToken: {
+    type: String,
+    index: true,
+    required: true,
+    default: crypto.randomBytes(16).toString('hex') // 16 bytes are represented as 32 hexadecimal characters
+  }
+
 });
 
 userSchema.pre("save", async function preSave(next) {

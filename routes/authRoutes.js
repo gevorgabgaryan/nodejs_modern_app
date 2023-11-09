@@ -3,6 +3,7 @@ import AuthController from "../controllers/authController";
 import {
   validateRegisterData,
   validateLoginData,
+  validateVerifyData
 } from "../middlewares/validation";
 
 
@@ -48,5 +49,23 @@ authRoutes.post("/login", validateLoginData, async (req, res) => {
     });
   }
 });
+
+authRoutes.put("/verify/:userId/:verificationToken", validateVerifyData, async (req, res) => {
+    try {
+      const {userId, verificationToken} = req.params;
+      const result = await AuthController.verify(userId, verificationToken);
+      res.json({
+        status: true,
+        result,
+      });
+    } catch (e) {
+      console.log(e);
+      res.json({
+        status: false,
+        error: true,
+        message: "System error",
+      });
+    }
+  });
 
 export default authRoutes;

@@ -7,7 +7,11 @@ const Config = {
         url: process.env.MongoDB_URL || 'mongodb://localhost:27017',
         dbName: 'modern_app'
     },
-    JWTSECRET: process.env.JWTSECRET || 'mysecret',
+    JWTSecret: process.env.JWTSECRET || 'mysecret',
+    SendgridAPIKey: process.env.SENDGRID_API_KEY || 'SENDGRID_API_KEY',
+    fromEmail: process.env.FROM_EMAIL || 'your@example.com',
+    userRoles: ['user', 'admin', 'editor'],
+    userStatuses: ['new', 'active', 'inactive']
 }
 
 export default Config
