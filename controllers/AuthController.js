@@ -20,6 +20,10 @@ class AuthController {
   static async verifyResetPassword(resetToken, password) {
     return await AuthService.verifyResetPassword(resetToken, password);
   }
+
+  static async logout(session) {
+    return await AuthService.logout(session);
+  }
 }
 
 export default AuthController;

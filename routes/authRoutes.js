@@ -7,6 +7,7 @@ import {
   validateResetPasswordData,
   validateVerifyResetPassword,
 } from "../middlewares/validation";
+import {checkAuthorization} from "../middlewares/checkAuthorization";
 
 const authRoutes = Router();
 
@@ -99,7 +100,6 @@ authRoutes.put(
   "/verify-reset-password/:resetToken",
   validateVerifyResetPassword,
   async (req, res) => {
-
     try {
       const {resetToken} = req.params;
       const {password} = req.body;
@@ -108,6 +108,27 @@ authRoutes.put(
         resetToken,
         password
       );
+      res.json({
+        status: true,
+        result,
+      });
+    } catch (e) {
+      console.log(e);
+      res.json({
+        status: false,
+        error: true,
+        message: "System error",
+      });
+    }
+  }
+);
+
+authRoutes.get(
+  "/logout",
+  checkAuthorization(["admin", "editor", "user"]),
+  async (req, res) => {
+    try {
+      const result = await AuthController.logout(req.session);
       res.json({
         status: true,
         result,

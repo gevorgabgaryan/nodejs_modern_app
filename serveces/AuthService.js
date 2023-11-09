@@ -4,7 +4,7 @@ import Config from "../config/";
 import MailSenderService from "./MailSenderService";
 import UserModel from "../models/userModel";
 import ResetTokenModel from "../models/ResetTokenModel";
-import SessionModel from '../models/SessionModel'
+import SessionModel from "../models/SessionModel";
 
 UserService;
 class AuthService {
@@ -72,10 +72,10 @@ class AuthService {
     );
 
     const session = new SessionModel({
-        token,
-        userId: user._id,
-        role: user.role
-    })
+      token,
+      userId: user._id,
+      role: user.role,
+    });
 
     await session.save();
 
@@ -140,10 +140,38 @@ class AuthService {
     };
   }
 
+  static async logout(session) {
+    const res = await SessionModel.deleteOne(session);
+    return {
+      message: "logout succesful",
+    };
+  }
+
   static async _createPasswordResetToken(userId) {
     const resetToken = new ResetTokenModel({userId});
     const newToken = await resetToken.save();
     return newToken.token;
+  }
+
+  static async checkToken(token, roles) {
+    const session = await SessionModel.findOne({token});
+    if (!session) {
+      throw new Error("Invalid token");
+    }
+    const payload = jwt.verify(token, Config.JWTSecret);
+    if (!session.userId.equals(payload.userId)) {
+      throw new Error("Invalid token");
+    }
+    const user = await UserModel.findById(payload.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (!roles.includes(user.role)) {
+      throw new Error("Access denied");
+    }
+
+    return session;
   }
 }
 
