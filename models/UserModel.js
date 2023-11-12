@@ -1,7 +1,7 @@
 import {Schema, model} from "mongoose";
 import bcrypt from "bcrypt";
-import Config from '../config'
-import crypto from 'crypto';
+import Config from "../config";
+import crypto from "crypto";
 
 const userSchema = Schema({
   firstName: {
@@ -23,49 +23,75 @@ const userSchema = Schema({
   },
   password: {
     type: String,
-    required: true,
     minlength: 6,
     triem: true,
   },
   role: {
     type: String,
     enum: Config.userRoles,
-    default: 'user'
+    default: "user",
   },
-  status:  {
+  status: {
     type: String,
     enum: Config.userStatuses,
-    default: 'new'
+    default: "new",
   },
   verificationToken: {
     type: String,
     index: true,
     required: true,
-    default:  crypto.randomBytes(16).toString('hex') // 16 bytes are represented as 32 hexadecimal characters
-  }
-
-});
-
-userSchema.pre("save", async function preSave(next) {
-  const user = this;
-  if (user.isModified("password")) {
-    try {
-      const hash = await bcrypt.hash(user.password, 12);
-      user.password = hash;
-      return next();
-    } catch (e) {
-      next(e);
+    default: crypto.randomBytes(16).toString("hex"), // 16 bytes are represented as 32 hexadecimal characters
+  },
+  oauthprofiles: [
+    {
+      provider: {type: String},
+      profileId: {type: String}
     }
-  }
-}, {
-    timestamps: true
+  ]
 });
 
-userSchema.methods.comparePassword = async function comparePassword(enteredPassword) {
-    return bcrypt.compare(enteredPassword, this.password);
-}
+userSchema.index({
+  'oauthprofiles.provider': 1,
+  'outhprofiles.profileId': 1
+});
 
-const UserModel = model('user', userSchema)
+userSchema.pre(
+  "save",
+  async function preSave(next) {
+    const user = this;
+    if (user.isModified("password")) {
+      try {
+        const hash = await bcrypt.hash(user.password, 12);
+        user.password = hash;
+        return next();
+      } catch (e) {
+        next(e);
+      }
+    }
+  },
+  {
+    timestamps: true,
+  }
+);
+
+userSchema.methods.comparePassword = async function comparePassword(
+  enteredPassword
+) {
+  return bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.methods.entitize = function () {
+  const args = Array.from(arguments);
+  const res = this.toObject({virtuals: true});
+  delete res["__v"];
+  res["id"] = res["_id"];
+  delete res["_id"];
+  for (const item of args) {
+    delete res[item];
+  }
+  return res;
+};
+
+const UserModel = model("user", userSchema);
 
 export default UserModel;
-

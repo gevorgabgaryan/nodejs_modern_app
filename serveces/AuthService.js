@@ -28,7 +28,7 @@ class AuthService {
       "Verification Code"
     );
     return {
-      id: newUser._id,
+      id: newUser.id,
       isEmailSend,
       message: "Account was created",
     };
@@ -61,9 +61,35 @@ class AuthService {
         message: "invalid credentials",
       };
     }
+    return AuthService._afterLogin(user, rememberMe);
+  }
+
+  static async socialLogin(oauthProfile) {
+    let user = await UserService.findByOAuthProfile(
+      oauthProfile.provider,
+      oauthProfile.profileId
+    );
+    if (!user) {
+      user = await UserService.findByEmail(oauthProfile.email);
+    }
+
+    if (!user) {
+      if (!oauthProfile.emails || !oauthProfile.emails.length) {
+        return {
+          message: "Email required",
+        };
+      }
+      const email = oauthProfile.emails[0].value;
+      user = await UserService.addSocialUser(email, oauthProfile);
+    }
+
+    return AuthService._afterLogin(user);
+  }
+
+  static async _afterLogin(user, rememberMe) {
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: user.id,
       },
       Config.JWTSecret,
       {
@@ -73,17 +99,17 @@ class AuthService {
 
     const session = new SessionModel({
       token,
-      userId: user._id,
+      userId: user.id,
       role: user.role,
     });
 
     await session.save();
 
-    return {jwt: token};
+    return {userId: user.id, email: user.email, token};
   }
 
   static async verify(userId, verificationToken) {
-    const user = await UserModel.findById(userId);
+    const user = await UserService.findById(userId);
     if (!user) {
       return {
         message: "User not found",
@@ -110,14 +136,14 @@ class AuthService {
         message: "User not found",
       };
     }
-    const resetToken = await this._createPasswordResetToken(user._id);
+    const resetToken = await AuthService._createPasswordResetToken(user.id);
     const isTokenlSend = await MailSenderService.sendMail(
       email,
       resetToken,
       "Reset password code"
     );
     return {
-      id: user._id,
+      id: user.id,
       message: isTokenlSend ? "Reset token sent" : "System error",
     };
   }
@@ -162,7 +188,7 @@ class AuthService {
     if (!session.userId.equals(payload.userId)) {
       throw new Error("Invalid token");
     }
-    const user = await UserModel.findById(payload.userId);
+    const user = await UserService.findById(payload.userId);
     if (!user) {
       throw new Error("User not found");
     }

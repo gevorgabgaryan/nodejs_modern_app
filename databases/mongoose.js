@@ -14,11 +14,11 @@ class MongooseService {
       console.log(e)
     });
     db.once("open", () => {
-      console.log(`Mongo DB connecet on url ${url}`);
+      console.log(`Mongo DB connecet`);
     });
 
     try {
-      await mongoose.connect(`${url}/${Config.mongoDB.dbName}`);
+      await mongoose.connect(`${url}/${Config.mongoDB.dbName}?tls=true&authSource=admin`);
     } catch (e) {
       console.log(`Mongo connection error`);
       console.log(e);

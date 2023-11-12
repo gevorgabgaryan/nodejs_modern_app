@@ -1,5 +1,6 @@
 import {Router} from "express";
 import AuthController from "../controllers/authController";
+import githubOAuthRoutes from "./githubOAuthRoutes";
 import {
   validateRegisterData,
   validateLoginData,
@@ -7,7 +8,8 @@ import {
   validateResetPasswordData,
   validateVerifyResetPassword,
 } from "../middlewares/validation";
-import {checkAuthorization} from "../middlewares/checkAuthorization";
+import {passportCheckAuthorization} from "../middlewares/passportCheckAuthorization";
+
 
 const authRoutes = Router();
 
@@ -125,7 +127,7 @@ authRoutes.put(
 
 authRoutes.get(
   "/logout",
-  checkAuthorization(["admin", "editor", "user"]),
+  passportCheckAuthorization(["admin", "editor", "user"]),
   async (req, res) => {
     try {
       const result = await AuthController.logout(req.session);
@@ -143,5 +145,7 @@ authRoutes.get(
     }
   }
 );
+
+authRoutes.use('/github', githubOAuthRoutes)
 
 export default authRoutes;

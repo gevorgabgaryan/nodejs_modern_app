@@ -9,6 +9,10 @@ class AuthController {
     return await AuthService.login(email, password, rememberMe);
   }
 
+  static async socialLogin(oauthProfile) {
+    return await AuthService.socialLogin(oauthProfile);
+  }
+
   static async verify(userId, verificationToken) {
     return await AuthService.verify(userId, verificationToken);
   }
