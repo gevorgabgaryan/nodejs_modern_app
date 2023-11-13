@@ -3,6 +3,7 @@ config();
 
 const Config = {
     port: process.env.PORT || 3115,
+    wsPort: process.env.WS_PORT || 1990,
     mongoDB: {
         url: process.env.MongoDB_URL || 'mongodb://localhost:27017',
         dbName: 'modern_app'

@@ -5,7 +5,8 @@ import {
   resetPasswordBodySchema,
   verifyResetPasswordBodySchema,
   verifyResetPasswordParamsSchema,
-} from "../validators/authValidator";
+} from "../validators/authValidatorSchemas.js";
+import { joiOtions as options } from "../utils/constants.js";
 
 export const validateRegisterData = (req, res, next) => {
   _validationHandler(req, res, next, registerBodySchema);
@@ -42,11 +43,7 @@ const _validationHandler = (
   querySchema,
   paramsSchema
 ) => {
-  const options = {
-    abortEarly: false, // include all errors
-    allowUnknown: false, // ignore unknown props
-    stripUnknown: false, // remove unknown props
-  };
+
   try {
     if (bodySchema) {
       const hasError = _checkSchema(res, bodySchema, req.body, options, "body");

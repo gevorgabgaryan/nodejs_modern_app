@@ -53,7 +53,11 @@ class AuthService {
         message: "user not found ",
       };
     }
-
+    if (!user.password) {
+      return {
+        message: "Social  user",
+      };
+    }
     const isMatched = user.comparePassword(password);
 
     if (!isMatched) {
@@ -110,7 +114,7 @@ class AuthService {
 
   static async verify(userId, verificationToken) {
     const user = await UserService.findById(userId);
-    if (!user) {
+    if (!user) {x
       return {
         message: "User not found",
       };
@@ -180,6 +184,7 @@ class AuthService {
   }
 
   static async checkToken(token, roles) {
+   
     const session = await SessionModel.findOne({token});
     if (!session) {
       throw new Error("Invalid token");
@@ -193,7 +198,7 @@ class AuthService {
       throw new Error("User not found");
     }
 
-    if (!roles.includes(user.role)) {
+    if (roles && !roles.includes(user.role)) {
       throw new Error("Access denied");
     }
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -r @babel/register app.js"
+    "start": "nodemon -r @babel/register index.js"
   },
   "author": "Gevorg Abgaryan",
   "license": "ISC",
@@ -36,6 +36,7 @@
     "nodemon": "^3.0.1",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",
-    "passport-jwt": "^4.0.1"
+    "passport-jwt": "^4.0.1",
+    "ws": "^8.14.2"
   }
 }
