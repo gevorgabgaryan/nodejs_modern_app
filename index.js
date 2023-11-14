@@ -1,10 +1,12 @@
 import MongooseService from "./databases/mongoose";
 import API from "./API/API";
 import WsHandler from "./websocket/WsHandler";
+import SocketIO from "./SocketIO/SocketIO";
 
 (async () => {
   await MongooseService.init();
-  await API.init();
+  const server = await API.init();
   const wsHandler = new WsHandler();
   wsHandler.init();
+  SocketIO.init(server);
 })();

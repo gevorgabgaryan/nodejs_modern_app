@@ -46,6 +46,24 @@ class UserService {
     user.password = password;
     return user.save();
   }
+  static async makeOnline(id) {
+    const user = await UserModel.findById(id);
+    if (!user) {
+      throw new Error('User not found')
+    }
+    user.isOnline = true;
+    user.updatedAt = new Date();
+    return await user.save();
+  }
+  static async makeOffline(id) {
+    const user = await UserModel.findById(id);
+    if (!user) {
+      throw new Error('User not found')
+    }
+    user.isOnline = false;
+    user.updatedAt = new Date();
+    return await user.save();
+  }
 }
 
 export default UserService;

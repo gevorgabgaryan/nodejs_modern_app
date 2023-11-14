@@ -97,7 +97,7 @@ class AuthService {
       },
       Config.JWTSecret,
       {
-        expiresIn: rememberMe ? "1y" : "1h",
+        expiresIn: rememberMe ? "1y" : "3h",
       }
     );
 
@@ -105,6 +105,7 @@ class AuthService {
       token,
       userId: user.id,
       role: user.role,
+      email: user.email
     });
 
     await session.save();
@@ -184,7 +185,7 @@ class AuthService {
   }
 
   static async checkToken(token, roles) {
-   
+
     const session = await SessionModel.findOne({token});
     if (!session) {
       throw new Error("Invalid token");

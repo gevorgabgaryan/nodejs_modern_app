@@ -45,14 +45,20 @@ const userSchema = Schema({
   oauthprofiles: [
     {
       provider: {type: String},
-      profileId: {type: String}
-    }
-  ]
+      profileId: {type: String},
+    },
+  ],
+  isOnline: {type: Boolean, default: false},
+}, {
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  }
 });
 
 userSchema.index({
-  'oauthprofiles.provider': 1,
-  'outhprofiles.profileId': 1
+  "oauthprofiles.provider": 1,
+  "outhprofiles.profileId": 1,
 });
 
 userSchema.pre(
@@ -68,9 +74,6 @@ userSchema.pre(
         next(e);
       }
     }
-  },
-  {
-    timestamps: true,
   }
 );
 

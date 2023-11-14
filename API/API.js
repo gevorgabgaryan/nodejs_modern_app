@@ -1,8 +1,9 @@
 import express from "express";
-import http from "http";
+import {createServer} from "http";
 import Config from "../config";
 import apiRoutes from "../routes/apiRoutes";
 import SetupPassport from "../lib/passport";
+import cors from "cors";
 
 class API {
   static async init() {
@@ -11,6 +12,7 @@ class API {
 
     app.use(express.json());
     app.use(express.urlencoded());
+    app.use(cors());
     app.use(passport.initialize());
     app.use("/api", apiRoutes);
 
@@ -19,13 +21,15 @@ class API {
       res.json({message: "API not found"});
     });
 
-    const server = http.createServer(app);
+
+    const server = createServer(app);
 
     const port = Config.port;
 
     server.listen(port, () => {
       console.log(`Rest server started on port: ${port}`);
     });
+    return server;
   }
 }
 
