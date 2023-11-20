@@ -1,4 +1,4 @@
-import MongooseService from "./databases/mongoose";
+import MongooseService from "./databases/MongooseService";
 import API from "./API/API";
 import WsHandler from "./websocket/WsHandler";
 import SocketIO from "./SocketIO/SocketIO";

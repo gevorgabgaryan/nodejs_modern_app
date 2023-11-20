@@ -18,7 +18,7 @@ class MongooseService {
     });
 
     try {
-      await mongoose.connect(`${url}/${Config.mongoDB.dbName}?tls=true&authSource=admin`);
+      await mongoose.connect(`${url}/${Config.mongoDB.dbName}`);
     } catch (e) {
       console.log(`Mongo connection error`);
       console.log(e);
