@@ -14,7 +14,11 @@ const Config = {
     userRoles: ['user', 'admin', 'editor'],
     userStatuses: ['new', 'active', 'inactive'],
     githubClientId: process.env.GITHUB_CLIENT_ID,
-    githubClientSecret: process.env.GITHUB_CLIENT_SECRET
+    githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+    redis: {
+        port: process.env.REDIS_PORT || 6379,
+        client: null
+    }
 }
 
 export default Config

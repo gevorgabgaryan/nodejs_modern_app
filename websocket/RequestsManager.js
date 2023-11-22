@@ -21,9 +21,8 @@ export class RequestsManager {
       async (socket, params, roles) => {
         try {
           const {token} = params;
-          const session = await AuthService.checkToken(token, roles);
-          const userId = session.userId.toString();
-          this.userManager.addAuthorized(userId, socket);
+          const {userId} = await AuthService.checkToken(token, roles);
+          this.userManager.addAuthorized(userId.toString(), socket);
           socket.userId = userId;
           this.send(socket, {message: "Successfully authorized"});
         } catch (e) {

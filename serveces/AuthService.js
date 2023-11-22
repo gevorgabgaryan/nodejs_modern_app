@@ -2,9 +2,7 @@ import UserService from "./UserService";
 import jwt from "jsonwebtoken";
 import Config from "../config/";
 import MailSenderService from "./MailSenderService";
-import UserModel from "../models/userModel";
 import ResetTokenModel from "../models/ResetTokenModel";
-import SessionModel from "../models/SessionModel";
 
 UserService;
 class AuthService {
@@ -55,7 +53,7 @@ class AuthService {
     }
     if (!user.password) {
       return {
-        message: "Social  user",
+        message: "Social user",
       };
     }
     const isMatched = user.comparePassword(password);
@@ -91,9 +89,11 @@ class AuthService {
   }
 
   static async _afterLogin(user, rememberMe) {
+    const redisClient = Config.redis.client;
     const token = jwt.sign(
       {
         userId: user.id,
+        role: user.role,
       },
       Config.JWTSecret,
       {
@@ -101,22 +101,14 @@ class AuthService {
       }
     );
 
-    const session = new SessionModel({
-      token,
-      userId: user.id,
-      role: user.role,
-      email: user.email
-    });
-
-    await session.save();
-
+    await redisClient.sadd(`user:${user.id}:tokens`, token);
     return {userId: user.id, email: user.email, token};
   }
 
   static async verify(userId, verificationToken) {
     const user = await UserService.findById(userId);
-    if (!user) {x
-      return {
+    if (!user) {
+        return {
         message: "User not found",
       };
     }
@@ -171,8 +163,9 @@ class AuthService {
     };
   }
 
-  static async logout(session) {
-    const res = await SessionModel.deleteOne(session);
+  static async logout(userId, token) {
+    const redisClient = Config.redis.client;
+    await redisClient.srem(`user:${userId}:tokens`, token);
     return {
       message: "logout succesful",
     };
@@ -184,26 +177,28 @@ class AuthService {
     return newToken.token;
   }
 
-  static async checkToken(token, roles) {
+  static async checkToken(token, authorizationRoles) {
+    try {
+      const payload = jwt.verify(token, Config.JWTSecret);
+      const {userId, role} = payload;
+      const redisClient = Config.redis.client;
+      const exists = await redisClient.sismember(
+        `user:${userId}:tokens`,
+        token
+      );
 
-    const session = await SessionModel.findOne({token});
-    if (!session) {
-      throw new Error("Invalid token");
-    }
-    const payload = jwt.verify(token, Config.JWTSecret);
-    if (!session.userId.equals(payload.userId)) {
-      throw new Error("Invalid token");
-    }
-    const user = await UserService.findById(payload.userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+      if (exists !== 1) {
+        throw new Error("Invalid token");
+      }
 
-    if (roles && !roles.includes(user.role)) {
-      throw new Error("Access denied");
+      if (authorizationRoles && !authorizationRoles.includes(role)) {
+        throw new Error("Access denied");
+      }
+      return {userId, role};
+    } catch (e) {
+      console.log(e);
+      throw new Error(JSON.stringify(e));
     }
-
-    return session;
   }
 }
 

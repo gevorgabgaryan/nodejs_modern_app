@@ -12,8 +12,8 @@ class SocketIO {
       try {
         const token = socket.handshake.auth.token;
         if (token) {
-          const session = await AuthService.checkToken(token, Config.userRoles);
-          socket.userId = session.userId;
+          const {userId} = await AuthService.checkToken(token, Config.userRoles);
+          socket.userId = userId;
           return next();
         }
         throw new Error("Auth token required");

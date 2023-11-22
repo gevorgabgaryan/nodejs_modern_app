@@ -7,10 +7,10 @@ class MongooseService {
     const db = mongoose.connection;
 
     db.on("connected", () => {
-      console.log('Connected to MongoDB');
+      console.log('connected to MongoDB');
     });
     db.on("error", (e) => {
-      console.log('MongoDB connect error');
+      console.error('MongoDB connect error');
       console.log(e)
     });
     db.once("open", () => {

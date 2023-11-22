@@ -48,6 +48,7 @@ class ProductService {
       price,
       count,
       discountPercentage,
+      isVisible: visible
     });
     if (visible) {
       product.visible = visible;

@@ -2,37 +2,38 @@ import {Router} from "express";
 import {
   validateGetProducts,
   validateAddProduct,
-  validateProductObjectId,
+  validateParamsObjectId,
   validateEditProduct
 } from "../middlewares/validation";
 import ProductController from "../controllers/ProductController";
-import {passportCheckAuthorization} from "../middlewares/passportCheckAuthorization";
+import {checkAuthorization} from "../middlewares/checkAuthorization";
+
 
 const productRoutes = Router();
 
 productRoutes.get("/", validateGetProducts, ProductController.all);
-productRoutes.get("/get/:id", validateProductObjectId, ProductController.one);
+productRoutes.get("/get/:id", validateParamsObjectId, ProductController.one);
 productRoutes.post(
   "/add",
   validateAddProduct,
-  passportCheckAuthorization(["admin", "editor"]),
+  checkAuthorization(["admin", "editor"]),
   ProductController.add
 );
 productRoutes.put(
   "/edit/:id",
   validateEditProduct,
-  passportCheckAuthorization(["admin", "editor"]),
+  checkAuthorization(["admin", "editor"]),
   ProductController.edit
 );
 productRoutes.delete(
   "/delete/:id",
-  validateProductObjectId,
-  passportCheckAuthorization(["admin", "editor"]),
+  validateParamsObjectId,
+  checkAuthorization(["admin", "editor"]),
   ProductController.delete
 );
 productRoutes.get(
   "/total-discount",
-  passportCheckAuthorization(["admin", "editor"]),
+  checkAuthorization(["admin", "editor"]),
   ProductController.totalDiscount
 );
 
