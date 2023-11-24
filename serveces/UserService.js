@@ -1,4 +1,4 @@
-import UserModel from "../models/userModel";
+import UserModel from "../models/mongoose/UserModel";
 
 class UserService {
   static async findByEmail(email) {

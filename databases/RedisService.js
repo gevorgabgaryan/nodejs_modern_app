@@ -9,7 +9,7 @@ class RedisService {
         });
         redis.createBuiltinCommand('error', (e)=>{
             console.log(e);
-            process.exit(1);
+            // process.exit(1);
         })
         Config.redis.client = redis;
         return redis;

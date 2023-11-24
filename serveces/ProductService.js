@@ -1,4 +1,4 @@
-import ProductModel from "../models/ProductModel";
+import ProductModel from "../models/mongoose/ProductModel";
 
 class ProductService {
   static async getProducts(page, itemPerPage, keyword) {

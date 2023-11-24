@@ -2,7 +2,7 @@ import UserService from "./UserService";
 import jwt from "jsonwebtoken";
 import Config from "../config/";
 import MailSenderService from "./MailSenderService";
-import ResetTokenModel from "../models/ResetTokenModel";
+import ResetTokenModel from "../models/mongoose/ResetTokenModel";
 
 UserService;
 class AuthService {

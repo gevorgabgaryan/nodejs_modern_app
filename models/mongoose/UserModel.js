@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose";
 import bcrypt from "bcrypt";
-import Config from "../config";
+import Config from "../../config";
 import crypto from "crypto";
 
 const userSchema = Schema({

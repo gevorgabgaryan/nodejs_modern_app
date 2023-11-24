@@ -36,10 +36,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.0",
+    "mysql2": "^3.6.5",
     "nodemon": "^3.0.1",
     "passport": "^0.6.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
+    "sequelize": "^6.35.1",
     "socket.io": "^4.7.2",
     "ws": "^8.14.2"
   }
