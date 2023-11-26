@@ -1,4 +1,5 @@
 import { config } from "dotenv"
+import path from 'path';
 config();
 
 const Config = {
@@ -29,7 +30,8 @@ const Config = {
             password: process.env.MYSQL_PASSWORD,
         },
         client: null
-    }
+    },
+    userPhotosDir:  path.join(__dirname, '../public/images/users'),
 }
 
 export default Config

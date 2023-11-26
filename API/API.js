@@ -11,7 +11,7 @@ class API {
     const passport = SetupPassport();
 
     app.use(express.json());
-    app.use(express.urlencoded());
+    app.use(express.urlencoded({extended: true}));
     app.use(cors());
     app.use(passport.initialize());
     app.use("/api", apiRoutes);
@@ -21,6 +21,7 @@ class API {
       res.json({message: "API not found"});
     });
 
+    app.listen
 
     const server = createServer(app);
 

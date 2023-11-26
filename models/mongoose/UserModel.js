@@ -49,6 +49,7 @@ const userSchema = Schema({
     },
   ],
   isOnline: {type: Boolean, default: false},
+  imagePath: {type: String}
 }, {
   timestamps: {
     createdAt: 'created_at',
