@@ -21,7 +21,7 @@ export const checkAuthorization = (roles) => {
       req.userId = userId
       next()
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       res.json({
         message: 'unauthorized'
       })

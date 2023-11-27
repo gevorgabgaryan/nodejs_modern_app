@@ -11,7 +11,7 @@ export const resaizeImage = async (req, res, next) => {
       .write(`${imageFolderPath}/avatar_${req.fileName}`)
     next()
   } catch (e) {
-    console.log(e)
+    logger.error(e)
     res.json({
       message: 'unexpected error'
     })

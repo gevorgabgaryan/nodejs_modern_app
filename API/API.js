@@ -4,6 +4,8 @@ import Config from '../config'
 import apiRoutes from '../routes/apiRoutes'
 import SetupPassport from '../lib/passport'
 import cors from 'cors'
+import requestLogger from '../shared/requestLogger'
+import logger from '../shared/logger'
 
 class API {
   static async init () {
@@ -13,11 +15,12 @@ class API {
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.use(cors())
+    app.use(requestLogger)
     app.use(passport.initialize())
     app.use('/api', apiRoutes)
-
+    app.set('env', Config.nodeEnv)
     app.use((req, res) => {
-      console.log(`Request url ${req.url}`)
+      logger.info(`Request url ${req.url}`)
       res.json({ message: 'API not found' })
     })
 
@@ -26,7 +29,7 @@ class API {
     const port = Config.port
 
     server.listen(port, () => {
-      console.log(`Rest server started on port: ${port}`)
+      logger.info(`Rest server started on port: ${port}`)
     })
     return server
   }

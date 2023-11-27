@@ -1,29 +1,30 @@
-import mongoose from "mongoose";
-import Config from "../config";
+import mongoose from 'mongoose'
+import Config from '../config'
+import logger from '../shared/logger'
 
 class MongooseService {
-  static async init() {
-    const url = Config.mongoDB.url;
-    const db = mongoose.connection;
+  static async init () {
+    const url = Config.mongoDB.url
+    const db = mongoose.connection
 
-    db.on("connected", () => {
-      console.log('connected to MongoDB');
-    });
-    db.on("error", (e) => {
-      console.error('MongoDB connect error');
-      console.log(e)
-    });
-    db.once("open", () => {
-      console.log(`Mongo DB connecet`);
-    });
+    db.on('connected', () => {
+      logger.info('connected to MongoDB')
+    })
+    db.on('error', (e) => {
+      console.error('MongoDB connect error')
+      logger.error(e)
+    })
+    db.once('open', () => {
+      logger.info('Mongo DB connecet')
+    })
 
     try {
-      await mongoose.connect(`${url}/${Config.mongoDB.dbName}`);
+      await mongoose.connect(`${url}/${Config.mongoDB.dbName}`)
     } catch (e) {
-      console.log(`Mongo connection error`);
-      console.log(e);
+      logger.info('Mongo connection error')
+      logger.error(e)
     }
   }
 }
 
-export default MongooseService;
+export default MongooseService

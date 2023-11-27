@@ -1,4 +1,5 @@
 import UserService from '../serveces/UserService'
+import logger from '../shared/logger'
 
 class UserController {
   static async uploadPhoto (req, res) {
@@ -10,7 +11,7 @@ class UserController {
         result
       })
     } catch (e) {
-      console.log(e)
+      logger.error(e)
       res.json({
         status: false,
         error: true,

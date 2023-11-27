@@ -3,6 +3,7 @@ import path from 'path'
 config()
 
 const Config = {
+  nodeEnv: process.env.NODE_ENV || 'development',
   port: process.env.PORT || 3115,
   wsPort: process.env.WS_PORT || 1990,
   mongoDB: {

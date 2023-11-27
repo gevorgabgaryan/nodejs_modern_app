@@ -46,7 +46,7 @@ export const uploadImage = async (req, res, next) => {
     await upload(req, res)
     next()
   } catch (e) {
-    console.log(e)
+    logger.error(e)
     if (e instanceof multer.MulterError) {
       res.json({
         message: e.message

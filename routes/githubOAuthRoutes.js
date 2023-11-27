@@ -18,7 +18,7 @@ githubOAuthRoutes.get(
         result,
       });
     } catch (e) {
-      console.log(e);
+      logger.error(e);
       res.json({
         status: false,
         error: true,
@@ -37,7 +37,7 @@ githubOAuthRoutes.get(
         message: "unauthorized",
       });
     } catch (e) {
-      console.log(e);
+      logger.error(e);
       res.json({
         status: false,
         error: true,

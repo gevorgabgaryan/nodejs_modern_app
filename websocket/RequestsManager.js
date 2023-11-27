@@ -1,120 +1,120 @@
-import AuthService from "../serveces/authService";
-import {wsTokenSchema} from "../validators/wsValidatorSchemas";
-import {WsValidator} from "./wsValidator";
-import {UserManager} from "./UserManager";
-import UserService from "../serveces/UserService";
-import {serializeUser} from "passport";
+import AuthService from '../serveces/authService'
+import { wsTokenSchema } from '../validators/wsValidatorSchemas'
+import { WsValidator } from './wsValidator'
+import { UserManager } from './UserManager'
+import UserService from '../serveces/UserService'
+import logger from '../shared/logger'
 
 export class RequestsManager {
-  constructor() {
-    this.callsList = {};
-    this.wsValidator = new WsValidator();
-    this.userManager = new UserManager();
+  constructor () {
+    this.callsList = {}
+    this.wsValidator = new WsValidator()
+    this.userManager = new UserManager()
   }
 
-  initCalls() {
+  initCalls () {
     this.registerCall(
-      "authorize",
-      "wsToken",
+      'authorize',
+      'wsToken',
       wsTokenSchema,
       null,
       async (socket, params, roles) => {
         try {
-          const {token} = params;
-          const {userId} = await AuthService.checkToken(token, roles);
-          this.userManager.addAuthorized(userId.toString(), socket);
-          socket.userId = userId;
-          this.send(socket, {message: "Successfully authorized"});
+          const { token } = params
+          const { userId } = await AuthService.checkToken(token, roles)
+          this.userManager.addAuthorized(userId.toString(), socket)
+          socket.userId = userId
+          this.send(socket, { message: 'Successfully authorized' })
         } catch (e) {
-          console.log(e);
+          logger.error(e)
           socket.send(
             JSON.stringify({
               error: true,
-              message: "unauthorized",
+              message: 'unauthorized'
             })
-          );
+          )
         }
       }
-    );
+    )
     this.registerCall(
-      "userInfo",
+      'userInfo',
       null,
       null,
-      ["user"],
+      ['user'],
       async (socket, params, roles) => {
         try {
           if (!roles) {
-            this.send(socket, {message: "System error"});
+            this.send(socket, { message: 'System error' })
           }
 
-          //checking autentication
+          // checking autentication
           if (!this.userManager.authorizedUsersSockets[socket.userId]) {
-            return this.send(socket, {message: "Unauthorized"});
+            return this.send(socket, { message: 'Unauthorized' })
           }
 
-          const user = await UserService.findById(socket.userId);
-          //checking authorization
+          const user = await UserService.findById(socket.userId)
+          // checking authorization
           if (!roles.includes(user.role)) {
-            return this.send(socket, {message: "Access denied"});
+            return this.send(socket, { message: 'Access denied' })
           }
-          this.send(socket, {email: user.email});
+          this.send(socket, { email: user.email })
         } catch (e) {
-          console.log(e);
+          logger.error(e)
           socket.send(
             JSON.stringify({
               error: true,
-              message: "System error",
+              message: 'System error'
             })
-          );
+          )
         }
       }
-    );
+    )
   }
 
-  registerCall(callName, validateSchemaName, schema, roles, callback) {
+  registerCall (callName, validateSchemaName, schema, roles, callback) {
     this.callsList[callName] = {
       validateSchemaName,
       callback,
-      roles,
-    };
-    this.wsValidator.addSchema(validateSchemaName, schema);
+      roles
+    }
+    this.wsValidator.addSchema(validateSchemaName, schema)
   }
 
-  async handleRequests(socket, data) {
-    const dataObj = JSON.parse(data.toString());
-    const eventName = dataObj.event;
+  async handleRequests (socket, data) {
+    const dataObj = JSON.parse(data.toString())
+    const eventName = dataObj.event
     if (!eventName) {
       return this.send(socket, {
         error: true,
-        message: "Event name required",
-      });
+        message: 'Event name required'
+      })
     }
 
-    if (typeof eventName !== "string") {
+    if (typeof eventName !== 'string') {
       return this.send(socket, {
         error: true,
-        message: `Invalid event name ${eventName}`,
-      });
+        message: `Invalid event name ${eventName}`
+      })
     }
 
-    const callObj = this.callsList[eventName];
+    const callObj = this.callsList[eventName]
     if (!callObj) {
-      return this.send(socket, {error: true, message: "Unexpected event"});
+      return this.send(socket, { error: true, message: 'Unexpected event' })
     }
 
     try {
       if (callObj.validateSchemaName) {
-        const params = dataObj.params;
+        const params = dataObj.params
         if (!params) {
-          return this.send(socket, {error: true, message: "Params required"});
+          return this.send(socket, { error: true, message: 'Params required' })
         }
-        const {error} = this.wsValidator.validate(
+        const { error } = this.wsValidator.validate(
           params,
           callObj.validateSchemaName
-        );
+        )
         if (error) {
-          console.log(error);
-          return this.send(socket, error);
+          logger.error(error)
+          return this.send(socket, error)
         }
       }
 
@@ -122,17 +122,17 @@ export class RequestsManager {
         socket,
         dataObj.params,
         callObj.roles
-      );
+      )
       if (result) {
-        this.send(socket, result);
+        this.send(socket, result)
       }
     } catch (e) {
-      this.send(socket, {error: true, message: e.message});
+      this.send(socket, { error: true, message: e.message })
     }
   }
 
-  send(socket, message) {
-    const data = JSON.stringify(message);
-    socket.send(data);
+  send (socket, message) {
+    const data = JSON.stringify(message)
+    socket.send(data)
   }
 }
