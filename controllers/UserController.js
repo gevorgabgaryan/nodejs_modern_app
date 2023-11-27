@@ -1,23 +1,23 @@
-import UserService from "../serveces/UserService";
+import UserService from '../serveces/UserService'
 
 class UserController {
-  static async uploadPhoto(req, res) {
+  static async uploadPhoto (req, res) {
     try {
-      const fileName = `${req.dateFolder}/${req.fileName}`;
-      const result = await UserService.uploadPhoto(req.userId, fileName);
+      const fileName = `${req.dateFolder}/${req.fileName}`
+      const result = await UserService.uploadPhoto(req.userId, fileName)
       res.json({
         status: true,
-        result,
-      });
+        result
+      })
     } catch (e) {
-      console.log(e);
+      console.log(e)
       res.json({
         status: false,
         error: true,
-        message: "System error",
-      });
+        message: 'System error'
+      })
     }
   }
 }
 
-export default UserController;
+export default UserController
