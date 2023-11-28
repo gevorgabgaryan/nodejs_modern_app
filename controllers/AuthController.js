@@ -11,13 +11,13 @@ class AuthController {
         firstName,
         lastName
       )
-      res.json({
+      res.status(200).json({
         status: true,
         result
       })
     } catch (e) {
       logger.error(e)
-      res.json({
+      res.status(400).json({
         status: false,
         error: true,
         message: 'System error'
@@ -29,16 +29,16 @@ class AuthController {
     try {
       const { email, password, rememberMe } = req.body
       const result = await AuthService.login(email, password, rememberMe)
-      res.json({
+      res.status(200).json({
         status: true,
         result
       })
     } catch (e) {
       logger.error(e)
-      res.json({
+      res.status(400).json({
         status: false,
         error: true,
-        message: 'System error'
+        message: JSON.stringify(e.message)
       })
     }
   }
@@ -51,13 +51,13 @@ class AuthController {
     try {
       const { userId, verificationToken } = req.params
       const result = await AuthService.verify(userId, verificationToken)
-      res.json({
+      res.status(200).json({
         status: true,
         result
       })
     } catch (e) {
       logger.error(e)
-      res.json({
+      res.staus(400).json({
         status: false,
         error: true,
         message: 'System error'

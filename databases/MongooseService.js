@@ -25,6 +25,16 @@ class MongooseService {
       logger.error(e)
     }
   }
+
+  static async disconnect () {
+    try {
+      await mongoose.disconnect()
+      logger.info('Disconnected from MongoDB')
+    } catch (e) {
+      logger.error('MongoDB disconnection error')
+      logger.error(e)
+    }
+  }
 }
 
 export default MongooseService

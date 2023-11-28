@@ -88,6 +88,10 @@ class UserService {
     await user.save()
     return fileName
   }
+
+  static async deleteAll () {
+    await UserModel.deleteMany()
+  }
 }
 
 export default UserService

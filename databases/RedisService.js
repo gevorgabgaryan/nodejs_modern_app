@@ -15,6 +15,17 @@ class RedisService {
     Config.redis.client = redis
     return redis
   }
+
+  static async disconnect () {
+    if (Config.redis.client) {
+      try {
+        await Config.redis.client.quit()
+        logger.info('Disconnected from Redis')
+      } catch (error) {
+        logger.error(`Error disconnecting from Redis: ${error}`)
+      }
+    }
+  }
 }
 
 export default RedisService

@@ -20,11 +20,16 @@ class AuthService {
       firstName,
       lastName
     )
-    const isEmailSend = await MailSenderService.sendMail(
-      email,
-      newUser.verificationToken,
-      'Verification Code'
-    )
+
+    let isEmailSend = false
+    if (process.env.NODE_ENV !== 'production') {
+      isEmailSend = await MailSenderService.sendMail(
+        email,
+        newUser.verificationToken,
+        'Verification Code'
+      )
+    }
+
     return {
       id: newUser.id,
       isEmailSend,
