@@ -1,6 +1,7 @@
 import request from 'supertest'
 import MongooseService from '../databases/MongooseService'
 import RedisService from '../databases/RedisService'
+import Config from '../config'
 import API from '../API/API'
 import UserService from '../serveces/UserService'
 let server
@@ -24,8 +25,8 @@ describe('test the auth API', () => {
   // test register
   it('should register user and get token', async () => {
     const user = {
-      email: 'gevorg@gmail.com',
-      password: 'Ga123456'
+      email: Config.testUser,
+      password: Config.testPassword
     }
 
     const res = await request(server).post('/api/auth/register').send(user)
@@ -64,8 +65,8 @@ describe('test the auth API', () => {
   // test login
   it('should authenticate user and get token', async () => {
     const user = {
-      email: 'gevorg@gmail.com',
-      password: 'Ga123456'
+      email: Config.testUser,
+      password: Config.testPassword
     }
 
     const res = await request(server).post('/api/auth/login').send(user)

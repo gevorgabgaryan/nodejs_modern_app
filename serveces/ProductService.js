@@ -1,33 +1,38 @@
-import ProductModel from "../models/mongoose/ProductModel";
+import ProductModel from '../models/mongoose/ProductModel'
 
 class ProductService {
-  static async getProducts(page, itemPerPage, keyword) {
+  static async getProducts (page, itemPerPage, keyword) {
     const query = {
-      isVisible: true,
-    };
-    if (keyword) {
+      isVisible: true
+    }
+
+    const { default: escapeStringRegexp } = await import('escape-string-regexp')
+
+    const sanitizedKeyword = escapeStringRegexp(keyword)
+
+    if (sanitizedKeyword) {
       query.$or = [
-        {name: {$regex: new RegExp(keyword, "i")}},
-        {sku: {$regex: new RegExp(keyword, "i")}},
-      ];
+        { name: { $regex: new RegExp(sanitizedKeyword, 'i') } },
+        { sku: { $regex: new RegExp(sanitizedKeyword, 'i') } }
+      ]
     }
     const products = await ProductModel.find(query)
       .skip((page - 1) * itemPerPage)
-      .limit(itemPerPage);
+      .limit(itemPerPage)
 
-    const totalProductsCount = await ProductModel.countDocuments(query);
+    const totalProductsCount = await ProductModel.countDocuments(query)
 
     return {
       products,
-      totalProductsCount,
-    };
+      totalProductsCount
+    }
   }
 
-  static async getProduct(id) {
-    return await ProductModel.findOne({_id: id});
+  static async getProduct (id) {
+    return await ProductModel.findOne({ _id: id })
   }
 
-  static async addProduct(
+  static async addProduct (
     sku,
     name,
     price,
@@ -35,11 +40,11 @@ class ProductService {
     visible,
     discountPercentage
   ) {
-    const skuExists = await ProductModel.exists({sku});
+    const skuExists = await ProductModel.exists({ sku })
     if (skuExists) {
       return {
-        message: `The given sku ${sku} already exists`,
-      };
+        message: `The given sku ${sku} already exists`
+      }
     }
 
     const product = new ProductModel({
@@ -49,14 +54,14 @@ class ProductService {
       count,
       discountPercentage,
       isVisible: visible
-    });
+    })
     if (visible) {
-      product.visible = visible;
+      product.visible = visible
     }
-    return await product.save();
+    return await product.save()
   }
 
-  static async editProduct(
+  static async editProduct (
     id,
     sku,
     name,
@@ -65,56 +70,58 @@ class ProductService {
     visible,
     discountPercentage
   ) {
-    const updateFields = {};
+    const updateFields = {}
 
     if (sku) {
-      updateFields.sku = sku;
+      updateFields.sku = sku
     }
     if (name) {
-      updateFields.name = name;
+      updateFields.name = name
     }
     if (price) {
-      updateFields.price = price;
+      updateFields.price = price
     }
     if (count) {
-      updateFields.count = count;
+      updateFields.count = count
     }
     if (visible !== undefined) {
-      updateFields.visible = visible;
+      updateFields.visible = visible
     }
     if (discountPercentage !== undefined) {
-      updateFields.discountPercentage = discountPercentage;
+      updateFields.discountPercentage = discountPercentage
     }
 
-    const {modifiedCount} = await ProductModel.updateOne(
-      {_id: id},
-      {$set: updateFields}
-    );
+    const { modifiedCount } = await ProductModel.updateOne(
+      { _id: id },
+      { $set: updateFields }
+    )
     if (modifiedCount > 0) {
       return {
-        message: "Product updated successfully",
-      };
+        message: 'Product updated successfully'
+      }
     } else {
       return {
-        message: "No changes detected or product not found",
-      };
+        message: 'No changes detected or product not found'
+      }
     }
   }
-  static async deleteProduct(id) {
-    const {deletedCount} = await ProductModel.deleteOne({_id: id});
+
+  static async deleteProduct (id) {
+    const { deletedCount } = await ProductModel.deleteOne({ _id: id })
     if (deletedCount > 0) {
       return {
-        message: "Product deleted successfully",
-      };
+        message: 'Product deleted successfully'
+      }
     } else {
       return {
-        message: "Product not found",
-      };
+        message: 'Product not found'
+      }
     }
   }
-  static async totalDiscount() {
-    return await ProductModel.calculateTotalDiscountSum();
+
+  static async totalDiscount () {
+    return await ProductModel.calculateTotalDiscountSum()
   }
 }
 
-export default ProductService;
+export default ProductService

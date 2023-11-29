@@ -6,6 +6,8 @@ import SetupPassport from '../lib/passport'
 import cors from 'cors'
 import requestLogger from '../shared/requestLogger'
 import logger from '../shared/logger'
+import helmet from 'helmet'
+import { rateLimit } from 'express-rate-limit'
 
 class API {
   static async init () {
@@ -14,7 +16,15 @@ class API {
 
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use(helmet())
     app.use(cors())
+
+    const limiter = rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+      legacyHeaders: false
+    })
+    app.use(limiter)
     app.use(requestLogger)
     app.use(passport.initialize())
     app.use('/api', apiRoutes)

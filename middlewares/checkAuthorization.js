@@ -1,4 +1,5 @@
 import AuthService from '../serveces/authService'
+import logger from '../shared/logger'
 
 export const checkAuthorization = (roles) => {
   return async (req, res, next) => {

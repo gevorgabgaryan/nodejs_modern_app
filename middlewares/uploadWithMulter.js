@@ -1,7 +1,8 @@
 import { promisify } from 'util'
 import Config from '../config'
-const multer = require('multer')
-const path = require('path')
+import multer from 'multer'
+import path from 'path'
+import logger from '../shared/logger'
 
 export const uploadImage = async (req, res, next) => {
   const userId = req.userId
