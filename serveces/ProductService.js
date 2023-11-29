@@ -11,9 +11,10 @@ class ProductService {
     const sanitizedKeyword = escapeStringRegexp(keyword)
 
     if (sanitizedKeyword) {
+      const regex = new RegExp(sanitizedKeyword, 'i')
       query.$or = [
-        { name: { $regex: new RegExp(sanitizedKeyword, 'i') } },
-        { sku: { $regex: new RegExp(sanitizedKeyword, 'i') } }
+        { name: { $regex: regex } },
+        { sku: { $regex: regex } }
       ]
     }
     const products = await ProductModel.find(query)
