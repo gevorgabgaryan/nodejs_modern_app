@@ -4,6 +4,8 @@ import Config from '../config/'
 import MailSenderService from './MailSenderService'
 import ResetTokenModel from '../models/mongoose/ResetTokenModel'
 import logger from '../shared/logger'
+import { CustomError } from '../shared/error'
+import HttpStatusCode from '../shared/httpStatusCodes'
 
 class AuthService {
   static async register (email, password, firstName, lastName) {
@@ -40,33 +42,23 @@ class AuthService {
   static async login (email, password, rememberMe) {
     const user = await UserService.findByEmail(email)
     if (!user) {
-      return {
-        message: 'invalid credentials'
-      }
+      return new CustomError('invalid credentials', 'INVALID_LOGIN', HttpStatusCode.BAD_REQUEST)
     }
 
     if (user.status === 'new') {
-      return {
-        message: 'verify email'
-      }
+      return new CustomError('verify email', 'VERIFY_EMAIL', HttpStatusCode.BAD_REQUEST, email)
     }
 
     if (user.status === 'inctive') {
-      return {
-        message: 'user not found '
-      }
+      return new CustomError('user not found', 'NOT_FOUND', HttpStatusCode.BAD_REQUEST)
     }
     if (!user.password) {
-      return {
-        message: 'Social user'
-      }
+      throw new CustomError('social user', 'SOCIAL_USER', HttpStatusCode.BAD_REQUEST)
     }
     const isMatched = user.comparePassword(password)
 
     if (!isMatched) {
-      return {
-        message: 'invalid credentials'
-      }
+      throw new CustomError('invalid credentials', 'INVALID_LOGIN', HttpStatusCode.BAD_REQUEST)
     }
     return AuthService._afterLogin(user, rememberMe)
   }

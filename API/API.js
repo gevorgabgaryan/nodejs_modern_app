@@ -8,12 +8,15 @@ import requestLogger from '../shared/requestLogger'
 import logger from '../shared/logger'
 import helmet from 'helmet'
 import { rateLimit } from 'express-rate-limit'
+import { responseSender } from '../utils/util'
+import { CustomError } from '../shared/error'
+import { promisifyAPI } from '../middlewares/promisify'
 
 class API {
   static async init () {
     const app = express()
     const passport = SetupPassport()
-
+    app.use(promisifyAPI())
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
     app.use(helmet())
@@ -26,14 +29,34 @@ class API {
     })
     app.use(limiter)
     app.use(requestLogger)
+
     app.use(passport.initialize())
     app.use('/api', apiRoutes)
     app.set('env', Config.nodeEnv)
+
     app.use((req, res) => {
-      logger.info(`Request url ${req.url}`)
-      res.json({ message: 'API not found' })
+      const message = {
+        message: 'API not found',
+        method: req.method,
+        url: req.originalUrl,
+        IP: req.headers['x-forwarded-for']
+      }
+      logger.warn(message)
+      responseSender(new CustomError('API not found', 'API_NOT_FOUND', 400, message
+      ), res)
     })
 
+    app.use(function (req, res, next) {
+      const info = {
+        url: req.originalUrl,
+        IP: req.headers['x-forwarded-for']
+      }
+      res.promisify(Promise.reject(new CustomError('API not found', 'API_NOT_FOUND', 400, info
+      )))
+    })
+    app.use(function (err, req, res, next) {
+      res.promisify(Promise.reject(err))
+    })
     const server = createServer(app)
 
     const port = Config.port

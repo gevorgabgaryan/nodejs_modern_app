@@ -28,18 +28,9 @@ class AuthController {
   static async login (req, res) {
     try {
       const { email, password, rememberMe } = req.body
-      const result = await AuthService.login(email, password, rememberMe)
-      res.status(200).json({
-        status: true,
-        result
-      })
+      res.promisify(await AuthService.login(email, password, rememberMe))
     } catch (e) {
-      logger.error(e)
-      res.status(400).json({
-        status: false,
-        error: true,
-        message: JSON.stringify(e.message)
-      })
+      res.promisify(Promise.reject(e))
     }
   }
 

@@ -1,5 +1,6 @@
 import Jimp from 'jimp'
 import Config from '../config'
+import logger from '../shared/logger'
 
 export const resaizeImage = async (req, res, next) => {
   try {
