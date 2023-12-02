@@ -1,4 +1,4 @@
-import ProductService from '../serveces/ProductService'
+import ProductService from '../serveces/ProductClient'
 import logger from '../shared/logger'
 
 class ProductController {
@@ -43,14 +43,14 @@ class ProductController {
   }
 
   static async add (req, res) {
-    const { sku, name, price, count, visible, discountPercentage } = req.body
+    const { sku, name, price, count, isVisible, discountPercentage } = req.body
     try {
       const result = await ProductService.addProduct(
         sku,
         name,
         price,
         count,
-        visible,
+        isVisible,
         discountPercentage
       )
       res.json({
@@ -59,11 +59,7 @@ class ProductController {
       })
     } catch (e) {
       logger.error(e)
-      res.json({
-        status: false,
-        error: true,
-        message: 'System error'
-      })
+      res.json(e)
     }
   }
 

@@ -7,7 +7,7 @@ const Config = {
   mongoDB: {
     url: process.env.MONGO_DB_URL
   },
-  serviceName: 'catalog service',
+  serviceName: 'catalog-service',
   serviceVersion: '1.0.0'
 }
 

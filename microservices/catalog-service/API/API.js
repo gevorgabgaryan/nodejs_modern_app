@@ -9,6 +9,7 @@ import helmet from 'helmet'
 import { responseSender } from '../utils/util'
 import { CustomError } from '../shared/error'
 import { promisifyAPI } from '../middlewares/promisify'
+import axios from 'axios'
 
 class API {
   static async init () {
@@ -52,13 +53,29 @@ class API {
     })
     const server = createServer(app)
 
-    server.listen(0)
     server.on('listening', () => {
       const addr = server.address()
-      const bind =
-        typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`
+      const register = async () =>
+        axios.put(`http://127.0.0.1:8008/register/${Config.serviceName}/${Config.serviceVersion}/${addr.port}`)
+          .catch(e => logger.error(e))
 
-      const cleanup = async () => {}
+      const unregister = async () =>
+        axios.delete(`http://127.0.0.1:8008/register/${Config.serviceName}/${Config.serviceVersion}/${addr.port}`)
+          .catch(e => logger.error(e))
+
+      register()
+
+      const interval = setInterval(register, 10000)
+
+      let isCleaning = false
+      const cleanup = async () => {
+        if (!isCleaning) {
+          isCleaning = true
+          clearInterval(interval)
+          await unregister()
+          isCleaning = true
+        }
+      }
 
       process.on('uncaughtException', async () => {
         await cleanup()
@@ -74,11 +91,12 @@ class API {
         await cleanup()
         process.exit(0)
       })
-
       console.info(
-        `${Config.serviceName}:${Config.serviceVersion} listening on ${bind}`
+        `${Config.serviceName}:${Config.serviceVersion} listening on ${addr.port}`
       )
     })
+
+    server.listen(0)
     return server
   }
 }

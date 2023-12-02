@@ -33,7 +33,11 @@ const Config = {
   },
   userPhotosDir: path.join(__dirname, '../public/images/users'),
   testUser: process.env.TEST_USER,
-  testPassword: process.env.TEST_PASWORD
+  testPassword: process.env.TEST_PASWORD,
+  registry: {
+    url: 'http://localhost:8008/register',
+    verion: '*'
+  }
 }
 
 export default Config

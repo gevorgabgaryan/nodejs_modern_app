@@ -57,7 +57,7 @@ class ProductService {
     if (isVisible !== undefined) {
       product.isVisible = isVisible
     }
-
+    console.log(product)
     return (await product.save()).entitize()
   }
 
@@ -67,7 +67,7 @@ class ProductService {
     name,
     price,
     count,
-    visible,
+    isVisible,
     discountPercentage
   ) {
     const updateFields = {}
@@ -84,8 +84,8 @@ class ProductService {
     if (count) {
       updateFields.count = count
     }
-    if (visible !== undefined) {
-      updateFields.visible = visible
+    if (isVisible !== undefined) {
+      updateFields.isVisible = isVisible
     }
     if (discountPercentage !== undefined) {
       updateFields.discountPercentage = discountPercentage

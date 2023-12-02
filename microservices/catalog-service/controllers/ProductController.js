@@ -25,6 +25,7 @@ class ProductController {
 
   static async add (req, res) {
     const { sku, name, price, count, isVisible, discountPercentage } = req.body
+
     try {
       res.promisify(await ProductService.addProduct(
         sku,
@@ -40,7 +41,7 @@ class ProductController {
   }
 
   static async edit (req, res) {
-    const { sku, name, price, count, visible, discountPercentage } = req.body
+    const { sku, name, price, count, isVisible, discountPercentage } = req.body
     const { id } = req.params
     try {
       res.promisify(await ProductService.editProduct(
@@ -49,7 +50,7 @@ class ProductController {
         name,
         price,
         count,
-        visible,
+        isVisible,
         discountPercentage
       ))
     } catch (e) {

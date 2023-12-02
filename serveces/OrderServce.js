@@ -2,7 +2,7 @@ import Models from '../models/sequelize'
 import Config from '../config'
 import UserService from './UserService'
 import BasketService from './BasketService'
-import ProductService from './ProductService'
+import ProductService from './ProductClient'
 
 class OrderService {
   constructor (sequelize) {
