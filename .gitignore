@@ -1,6 +1,6 @@
-node_modules
-package-lock.json
-public/
-.env
-logs
-coverage
+*node_modules
+*package-lock.json
+*public/
+*.env
+*logs
+*coverage
