@@ -1,4 +1,3 @@
-import ProductModel from '../models/mongoose/ProductModel'
 import ServiceClient from './ServiceClient'
 
 class ProductClient {
@@ -77,7 +76,11 @@ class ProductClient {
   }
 
   static async totalDiscount () {
-    return await ProductModel.calculateTotalDiscountSum()
+    const result = await ServiceClient.callService('catalog-service', {
+      method: 'delete',
+      url: '/product/total-discount'
+    })
+    return result
   }
 }
 

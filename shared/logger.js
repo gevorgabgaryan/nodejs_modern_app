@@ -1,4 +1,6 @@
 import { createLogger, format, transports } from 'winston'
+import Config from '../config'
+import { inspect } from 'util'
 
 const logger = createLogger({
   transports: [
@@ -28,30 +30,30 @@ const logger = createLogger({
     })
   ],
   format: format.combine(
-    format.label({
-      label: 'Label🏷️'
-    }),
     format.timestamp({
       format: 'MMM-DD-YYYY HH:mm:ss'
     }),
-    format.printf(info => `${info.level}: ${info.label}: ${[info.timestamp]}: ${info.message}`)
+    format.timestamp(),
+    format.printf(({ timestamp, level, message, service }) => {
+      const formattedMessage = typeof message === 'object' ? inspect(message, { depth: 2 }) : message
+      return `[${timestamp}] ${service} ${level}: ${formattedMessage}`
+    })
   )
 })
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new transports.Console({
-    handleExceptions: true,
-    level: 'error'
-  }))
-
-  logger.add(new transports.Console({
-    handleExceptions: true,
-    level: 'info'
-  }))
-  logger.add(new transports.Console({
-    handleExceptions: true,
-    level: 'warn'
-  }))
+if (Config.nodeEnv !== 'production') {
+  logger.add(
+    new transports.Console({
+      handleExceptions: true,
+      format: format.combine(
+        format.colorize(),
+        format.printf(({ timestamp, level, message }) => {
+          const formattedMessage = typeof message === 'object' ? inspect(message, { depth: 2 }) : message
+          return `[${timestamp}]  ${level}: ${formattedMessage}`
+        })
+      )
+    })
+  )
 }
 
 export default logger

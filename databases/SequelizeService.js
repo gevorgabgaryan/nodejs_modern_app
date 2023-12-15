@@ -15,7 +15,7 @@ class SequelizeService {
     } catch (e) {
       logger.info('Sequelize connection error')
       logger.error(e)
-      // process.exit(1);
+      process.exit(1)
     }
   }
 }

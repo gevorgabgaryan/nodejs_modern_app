@@ -1,19 +1,19 @@
-import OrderModel from "./OrderModel";
-import OrderItemModel from "./OrderItemModel";
+import OrderModel from './OrderModel'
+import OrderItemModel from './OrderItemModel'
 
 const Models = (sequelize) => {
-  const Order = OrderModel(sequelize);
-  const OrderItem = OrderItemModel(sequelize);
+  const Order = OrderModel(sequelize)
+  const OrderItem = OrderItemModel(sequelize)
 
-  Order.hasMany(OrderItem);
+  Order.hasMany(OrderItem)
   OrderItem.belongsTo(Order, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
     foreignKey: {
-      allowNull: false,
-    },
-  });
+      allowNull: false
+    }
+  })
 
-  sequelize.sync();
-};
+  sequelize.sync()
+}
 
-export default Models;
+export default Models
