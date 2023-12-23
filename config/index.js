@@ -1,5 +1,6 @@
 import { config } from 'dotenv'
 import path from 'path'
+import pkg from '../package.json'
 config()
 
 const Config = {
@@ -37,7 +38,9 @@ const Config = {
   registry: {
     url: 'http://localhost:8008/register',
     verion: '*'
-  }
+  },
+  serviceName: pkg.name,
+  serviceVersion: pkg.version
 }
 
 export default Config
