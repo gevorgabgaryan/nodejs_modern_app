@@ -12,14 +12,11 @@ import { responseSender } from '../utils/util';
 import { CustomError } from '../shared/error';
 import { promisifyAPI } from '../middlewares/promisify';
 import compression from 'compression';
-import LRU from 'lru-cache'; // Import lru-cache library
 
 class API {
   static async init() {
     const app = express();
     const passport = SetupPassport();
-    const cache = new LRU(); // Create an instance of lru-cache
-
     app.use(promisifyAPI());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -67,26 +64,6 @@ class API {
 
     app.use(function (err, req, res, next) {
       res.promisify(Promise.reject(err));
-    });
-
-    // Middleware for caching
-    app.use((req, res, next) => {
-      const key = req.originalUrl || req.url;
-      const cachedData = cache.get(key);
-
-      if (cachedData) {
-        return res.status(200).json(cachedData);
-      }
-
-      // If not in cache, proceed to the route handler
-      next();
-    });
-
-    // Add data to cache after the route handler
-    app.use((req, res, next) => {
-      const key = req.originalUrl || req.url;
-      const responseData = res.locals.data; // You should replace this with the actual response data
-      cache.set(key, responseData);
     });
 
     const server = createServer(app);

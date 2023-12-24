@@ -3,7 +3,6 @@ import API from "./API/API";
 import WsHandler from "./websocket/WsHandler";
 import SocketIO from "./SocketIO/SocketIO";
 import RedisService from "./databases/RedisService";
-import SequelizeService from "./databases/SequelizeService";
 import { errorHandler } from "./shared/errorHandler";
 import logger from "./shared/logger";
 import { BaseError } from "./shared/error";
@@ -14,7 +13,6 @@ import Config from "./config";
 (async () => {
   Tracing(`${Config.serviceName}:${Config.serviceVersion}`);
   await MongooseService.init();
-  await SequelizeService.init();
   RedisService.init();
   const server = await API.init();
   const wsHandler = new WsHandler();

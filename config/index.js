@@ -8,7 +8,8 @@ const Config = {
   port: process.env.PORT || 3115,
   wsPort: process.env.WS_PORT || 1990,
   mongoDB: {
-    url: process.env.MONGO_DB_URL
+    url: process.env.MONGO_DB_URL,
+    dbName: process.env.MONGO_DB_NAME
   },
   JWTSecret: process.env.JWTSECRET,
   SendgridAPIKey: process.env.SENDGRID_API_KEY,
