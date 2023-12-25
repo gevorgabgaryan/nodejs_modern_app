@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  main:
+    build:
+      context: ./
+    ports:
+      - "3115:3"
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+
+  registry:
+    build:
+      context: ./microservices/registry-service
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+
+  catalog:
+    build:
+      context: ./microservices/catalog-service
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+
+  order:
+    build:
+      context: ./microservices/order-service
+    depends_on:
+      - mysql
+      - rabbitmq
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+
+  mysql:
+    image: mysql:8
+    volumes:
+      - ./mysql:/var/lib/mysql
+    env_file:
+      - .env
+    ports:
+      - "3307:3306"
+
+  redis:
+    image: redis:latest
+    networks:
+      - mynetwork
+
+  mongodb:
+    image: mongo:latest
+    env_file:
+      - .env
+    networks:
+      - mynetwork
+
+  rabbitmq:
+      image: rabbitmq:latest
+      environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      networks:
+        - mynetwork
+
+networks:
+  mynetwork:
