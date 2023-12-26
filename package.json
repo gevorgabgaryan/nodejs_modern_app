@@ -47,7 +47,7 @@
     "@opentelemetry/auto-instrumentations-node": "^0.40.2",
     "@opentelemetry/sdk-metrics": "^1.19.0",
     "@opentelemetry/sdk-node": "^0.46.0",
-    "@sendgrid/mail": "^7.7.0",
+    "@sendgrid/mail": "^8.0.0",
     "amqplib": "^0.10.3",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
