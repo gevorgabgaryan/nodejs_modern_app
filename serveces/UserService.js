@@ -1,8 +1,6 @@
 import UserModel from '../models/mongoose/UserModel'
-import util from 'util'
 import Config from '../config'
-import { unlink, existsSync } from 'fs'
-const fsunlink = util.promisify(unlink)
+import { promises as fs } from 'fs'
 
 class UserService {
   static async findByEmail (email) {
@@ -77,16 +75,19 @@ class UserService {
     if (user.imagePath && user.imagePath !== fileName) {
       const imagePath = `${Config.userPhotosDir}/${user.imagePath}`
       const imageAvatarPath = `${Config.userPhotosDir}/avatar_${user.imagePath}`
-      if (existsSync(imagePath)) {
-        await fsunlink(imagePath)
-      }
-      if (existsSync(imageAvatarPath)) {
-        await fsunlink(imageAvatarPath)
-      }
+      await UserService.deleteImage(imagePath)
+      await UserService.deleteImage(imageAvatarPath)
     }
     user.imagePath = fileName
     await user.save()
     return fileName
+  }
+
+  async deleteImages (imagePath) {
+    if (await fs.stat(imagePath)) {
+      await fs.unlink(imagePath)
+      console.log('Image deleted:', imagePath)
+    }
   }
 
   static async deleteAll () {

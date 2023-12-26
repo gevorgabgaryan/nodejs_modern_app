@@ -1,5 +1,5 @@
-import Joi from "joi";
+import Joi from 'joi'
 
 export const wsTokenSchema = Joi.object({
-    token: Joi.string().required()
+  token: Joi.string().required()
 })

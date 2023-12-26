@@ -1,27 +1,27 @@
-import {Schema, model} from "mongoose";
-import crypto from 'crypto';
+import { Schema, model } from 'mongoose'
+import crypto from 'crypto'
 
 const resetTokenSchema = Schema(
   {
     userId: {
       type: String,
       required: true,
-      index: true,
+      index: true
     },
     token: {
       type: String,
       required: true,
       index: true,
       unique: true,
-      default: () => crypto.randomBytes(16).toString("hex"),
-    },
+      default: () => crypto.randomBytes(16).toString('hex')
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
+)
 
-resetTokenSchema.index({createAt: 1}, {expireAfterSeconds: 3600});
-const ResetTokenModel = model('resetToken', resetTokenSchema);
+resetTokenSchema.index({ createAt: 1 }, { expireAfterSeconds: 3600 })
+const ResetTokenModel = model('resetToken', resetTokenSchema)
 
-export default ResetTokenModel;
+export default ResetTokenModel

@@ -1,15 +1,26 @@
 import ProductService from '../serveces/ProductClient'
 import logger from '../shared/logger'
+import Config from '../config'
 
 class ProductController {
   static async all (req, res) {
+    const redisClient = Config.redis.client
     const { page, itemsPerPage, keyword } = req.query
+    const cacheKey = `getProducts:${page}:${itemsPerPage}:${keyword}`
     try {
+      const cacheResult = await redisClient.get(cacheKey)
+      if (cacheResult) {
+        return JSON.parse(cacheResult)
+      }
       const result = await ProductService.getProducts(
         page,
         itemsPerPage,
         keyword
       )
+      await redisClient.setex(cacheKey, 3600, JSON.stringify({
+        status: true,
+        result
+      }))
       res.json({
         status: true,
         result

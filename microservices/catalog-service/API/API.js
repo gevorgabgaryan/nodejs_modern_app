@@ -51,7 +51,11 @@ class API {
     app.use(function (err, req, res, next) {
       res.promisify(Promise.reject(err))
     })
+
+    
     const server = createServer(app)
+
+
 
     server.on('listening', () => {
       const addr = server.address()

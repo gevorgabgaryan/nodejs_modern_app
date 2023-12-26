@@ -1,5 +1,6 @@
 import { config } from 'dotenv'
 import path from 'path'
+import pkg from '../package.json'
 config()
 
 const Config = {
@@ -7,7 +8,8 @@ const Config = {
   port: process.env.PORT || 3115,
   wsPort: process.env.WS_PORT || 1990,
   mongoDB: {
-    url: process.env.MONGO_DB_URL
+    url: process.env.MONGO_DB_URL,
+    dbName: process.env.MONGO_DB_NAME
   },
   JWTSecret: process.env.JWTSECRET,
   SendgridAPIKey: process.env.SENDGRID_API_KEY,
@@ -37,7 +39,9 @@ const Config = {
   registry: {
     url: 'http://localhost:8008/register',
     verion: '*'
-  }
+  },
+  serviceName: pkg.name,
+  serviceVersion: pkg.version
 }
 
 export default Config
