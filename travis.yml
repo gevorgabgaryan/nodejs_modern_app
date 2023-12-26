@@ -1,0 +1,52 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_COMPOSE_VERSION=1.29.2
+
+before_install:
+  # Update Docker and install Docker Compose
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+before_script:
+  # Export and check environment variables
+  - export $(cat .env | xargs)
+  - env | grep MYSQL
+
+script:
+  # Build and run the containers
+  - docker-compose up --build -d
+
+  # Run any tests or additional scripts
+  # Here you might run unit or integration tests on your running services
+  - docker-compose exec main echo "Running tests"
+  # Add your test scripts here
+
+after_script:
+  - docker-compose down
+
+# Define any deployment strategies for pushing to container registries, or deployment to cloud providers
+deploy:
+  # Uncomment and edit the following part if you have a deployment step:
+  # provider: script
+  # script: bash deploy_production.sh
+  # on:
+  #   branch: master
+
+# Optional: Notifications configuration
+notifications:
+  email:
+    recipients:
+      - gevorg.gak@gmail.com
+    on_success: change # default: change
+    on_failure: always # default: always

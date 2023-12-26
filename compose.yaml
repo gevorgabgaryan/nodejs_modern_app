@@ -5,7 +5,7 @@ services:
     build:
       context: ./
     ports:
-      - "3115:3"
+      - "3115:3115"
     env_file:
       - .env
     networks:
