@@ -12,7 +12,7 @@ import { responseSender } from '../utils/util';
 import { CustomError } from '../shared/error';
 import { promisifyAPI } from '../middlewares/promisify';
 import compression from 'compression';
-
+ import expressStatusMonitor from 'express-status-monitor';
 class API {
   static async init() {
     const app = express();
@@ -31,7 +31,7 @@ class API {
     });
     app.use(limiter);
     app.use(requestLogger);
-
+    app.use(expressStatusMonitor({ path: '/monitor' }));
     app.use(passport.initialize());
     app.use('/api', apiRoutes);
     app.set('env', Config.nodeEnv);
@@ -64,6 +64,10 @@ class API {
 
     app.use(function (err, req, res, next) {
       res.promisify(Promise.reject(err));
+    });
+
+    app.get('/health', (req, res) => {
+      res.json({ status: 'OK' });
     });
 
     const server = createServer(app);

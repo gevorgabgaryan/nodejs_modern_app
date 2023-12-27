@@ -50,6 +50,9 @@ class API {
     app.use(function (err, req, res, next) {
       res.promisify(Promise.reject(err))
     })
+    app.get('/health', (req, res) => {
+      res.json({ status: 'OK' });
+    });
     const server = createServer(app)
 
     server.listen(Config.port)

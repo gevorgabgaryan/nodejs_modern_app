@@ -52,7 +52,10 @@ class API {
       res.promisify(Promise.reject(err))
     })
 
-    
+    app.get('/health', (req, res) => {
+      res.json({ status: 'OK' });
+    });
+
     const server = createServer(app)
 
 

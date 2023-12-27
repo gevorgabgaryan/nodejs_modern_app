@@ -68,6 +68,10 @@ class API {
       res.promisify(Promise.reject(err))
     })
 
+    app.get('/health', (req, res) => {
+      res.json({ status: 'OK' });
+    });
+
     const connection = await amqp.connect("amqp://127.0.0.1")
     const channel = await connection.createChannel()
     const queue = "orders"
